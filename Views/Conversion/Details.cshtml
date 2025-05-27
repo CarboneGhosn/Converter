@@ -1,0 +1,28 @@
+﻿@model CurrencyRateViewer.Models.Conversion
+
+@{
+    ViewData["Title"] = "Detalhes da Conversão";
+}
+
+<div class="container mt-4" style="max-width: 500px;">
+    <h2>Detalhes da Conversão</h2>
+
+    <dl class="row">
+        <dt class="col-sm-3">Data</dt>
+        <dd class="col-sm-9">@Model.Date.ToString("g")</dd>
+
+        <dt class="col-sm-3">Valor</dt>
+        <dd class="col-sm-9">@Model.Amount</dd>
+
+        <dt class="col-sm-3">De</dt>
+        <dd class="col-sm-9">@Model.FromCurrency</dd>
+
+        <dt class="col-sm-3">Para</dt>
+        <dd class="col-sm-9">@Model.ToCurrency</dd>
+
+        <dt class="col-sm-3">Resultado</dt>
+        <dd class="col-sm-9">@Model.Result</dd>
+    </dl>
+
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Voltar</a>
+</div>

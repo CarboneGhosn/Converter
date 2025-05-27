@@ -1,0 +1,163 @@
+@model Dictionary<string, decimal>
+
+@{
+    ViewData["Title"] = "Cotações em Tempo Real";
+    var baseCur = ViewBag.BaseCurrency as string ?? "BRL";
+
+    // Mapeamento código moeda -> símbolo
+    var currencySymbols = new Dictionary<string, string>
+    {
+        { "USD", "$" },
+        { "EUR", "€" },
+        { "GBP", "£" },
+        { "JPY", "¥" },
+        { "AUD", "A$" },
+        { "CAD", "C$" }
+    };
+
+    // Mapeamento código moeda -> código país para bandeira
+    var currencyFlags = new Dictionary<string, string>
+    {
+        { "USD", "us" },
+        { "EUR", "eu" },
+        { "GBP", "gb" },
+        { "JPY", "jp" },
+        { "AUD", "au" },
+        { "CAD", "ca" }
+    };
+
+    // Lista de moedas (inclui base "BRL" para conversão)
+    var currencies = Model.Keys.ToList();
+    currencies.Add("BRL");
+    currencies = currencies.Distinct().OrderBy(c => c).ToList();
+}
+
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Cotações (Base: @baseCur)</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning text-center">Nenhuma cotação disponível.</div>
+    }
+    else
+    {
+        <table class="table table-striped table-hover table-bordered align-middle text-center shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th>Moeda</th>
+                    <th>Valor (BRL)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var kv in Model)
+                {
+                    var code = kv.Key;
+                    var value = kv.Value;
+                    var symbol = currencySymbols.ContainsKey(code) ? currencySymbols[code] : "";
+                    var flagCode = currencyFlags.ContainsKey(code) ? currencyFlags[code] : "";
+
+                    <tr>
+                        <td class="d-flex align-items-center justify-content-center gap-2">
+                            @if (!string.IsNullOrEmpty(flagCode))
+                            {
+                                <img src="https://flagcdn.com/24x18/@(flagCode).png" alt="@code bandeira" width="24" height="18" style="border-radius: 3px;" />
+                            }
+                            <strong>@code</strong>
+                        </td>
+                        <td>@symbol @value.ToString("N4")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <!-- Botão para abrir modal de conversão -->
+    <div class="text-center mt-4">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#convertModal">
+            <i class="bi bi-arrow-left-right"></i> Abrir Conversor
+        </button>
+    </div>
+</div>
+
+<!-- Modal Bootstrap para conversão -->
+<div class="modal fade" id="convertModal" tabindex="-1" aria-labelledby="convertModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="convertForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="convertModalLabel">Conversor de Moedas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="convertResult" class="alert d-none" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label for="fromCurrency" class="form-label">De:</label>
+                        <select class="form-select" id="fromCurrency" name="fromCurrency" required>
+                            @foreach (var cur in currencies)
+                            {
+                                <option value="@cur">@cur</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="toCurrency" class="form-label">Para:</label>
+                        <select class="form-select" id="toCurrency" name="toCurrency" required>
+                            @foreach (var cur in currencies)
+                            {
+                                <option value="@cur" @(cur == "BRL" ? "selected" : "")>@cur</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Valor:</label>
+                        <input type="number" step="0.01" min="0" class="form-control" id="amount" name="amount" placeholder="Digite o valor" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Converter</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 5 Bundle + jQuery (para AJAX) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Script AJAX para conversão -->
+<script>
+    $(document).ready(function() {
+        $('#convertForm').submit(function(e) {
+            e.preventDefault();
+
+            var data = {
+                fromCurrency: $('#fromCurrency').val(),
+                toCurrency: $('#toCurrency').val(),
+                amount: parseFloat($('#amount').val())
+            };
+
+            var alertBox = $('#convertResult');
+            alertBox.addClass('d-none'); // esconde antes da requisição
+
+            $.post('@Url.Action("ConvertAjax", "Currency")', data)
+            .done(function(response) {
+                if (response.success) {
+                    alertBox.removeClass('d-none alert-danger').addClass('alert-success').text(response.message);
+                } else {
+                    alertBox.removeClass('d-none alert-success').addClass('alert-danger').text(response.message);
+                }
+            })
+            .fail(function() {
+                alertBox.removeClass('d-none alert-success').addClass('alert-danger').text('Erro ao conectar ao servidor.');
+            });
+        });
+    });
+</script>

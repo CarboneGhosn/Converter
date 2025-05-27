@@ -1,0 +1,56 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - CurrencyViewer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="@Url.Action("Index", "Currency")">CurrencyApp</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegação">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                @if (HttpContextAccessor.HttpContext.Session.GetString("username") != null)
+                {
+                    var username = HttpContextAccessor.HttpContext.Session.GetString("username");
+                    <ul class="navbar-nav align-items-center">
+                        <li class="nav-item me-3">
+                            <span class="nav-link disabled">Olá, <strong>@username</strong></span>
+                        </li>
+                        <li class="nav-item me-2">
+                            <a class="btn btn-outline-secondary" href="@Url.Action("Convert", "Currency")">
+                                <i class="bi bi-arrow-left-right"></i> Conversor
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-outline-danger" href="@Url.Action("Logout", "Account")">
+                                <i class="bi bi-box-arrow-right"></i> Sair
+                            </a>
+                        </li>
+                    </ul>
+                }
+                else
+                {
+                    <a class="btn btn-outline-primary" href="@Url.Action("Login", "Account")">
+                        <i class="bi bi-box-arrow-in-right"></i> Entrar
+                    </a>
+                }
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        @RenderBody()
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

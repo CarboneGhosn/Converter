@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Conversor de Moedas";
+    var currencies = ViewBag.Currencies as List<string> ?? new List<string>();
+    string fromCurrency = ViewBag.FromCurrency ?? "";
+    string toCurrency = ViewBag.ToCurrency ?? "";
+    decimal amount = ViewBag.Amount != null ? (decimal)ViewBag.Amount : 0;
+}
+
+<div class="container" style="max-width: 500px;">
+    <h2 class="mb-4 text-center">Conversor de Moedas</h2>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+    }
+    else if (ViewBag.Result != null)
+    {
+        <div class="alert alert-success">@ViewBag.Result</div>
+    }
+
+    <form method="post" asp-action="Convert" asp-controller="Currency">
+        <div class="mb-3">
+            <label for="fromCurrency" class="form-label">De</label>
+            <select class="form-select" id="fromCurrency" name="fromCurrency" required>
+                <option value="" disabled @(string.IsNullOrEmpty(fromCurrency) ? "selected" : "")>Selecione a moeda</option>
+                @foreach (var c in currencies)
+                {
+                    <option value="@c" @(c == fromCurrency ? "selected" : "")>@c</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="toCurrency" class="form-label">Para</label>
+            <select class="form-select" id="toCurrency" name="toCurrency" required>
+                <option value="" disabled @(string.IsNullOrEmpty(toCurrency) ? "selected" : "")>Selecione a moeda</option>
+                @foreach (var c in currencies)
+                {
+                    <option value="@c" @(c == toCurrency ? "selected" : "")>@c</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="amount" class="form-label">Quantidade</label>
+            <input type="number" step="any" min="0" class="form-control" id="amount" name="amount" value="@(amount > 0 ? amount.ToString() : "")" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Converter</button>
+    </form>
+</div>

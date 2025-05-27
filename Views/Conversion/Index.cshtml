@@ -1,0 +1,41 @@
+﻿@model List<CurrencyRateViewer.Models.Conversion>
+
+@{
+    ViewData["Title"] = "Histórico de Conversões";
+}
+
+<div class="container mt-4">
+    <h2>Histórico de Conversões</h2>
+
+    <a href="@Url.Action("Create")" class="btn btn-success mb-3">Nova Conversão</a>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Valor</th>
+                <th>De</th>
+                <th>Para</th>
+                <th>Resultado</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var conv in Model)
+            {
+                <tr>
+                    <td>@conv.Date.ToString("g")</td>
+                    <td>@conv.Amount</td>
+                    <td>@conv.FromCurrency</td>
+                    <td>@conv.ToCurrency</td>
+                    <td>@conv.Result</td>
+                    <td>
+                        <a href="@Url.Action("Details", new { id = conv.Id })" class="btn btn-info btn-sm">Ver</a>
+                        <a href="@Url.Action("Edit", new { id = conv.Id })" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="@Url.Action("Delete", new { id = conv.Id })" class="btn btn-danger btn-sm">Excluir</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

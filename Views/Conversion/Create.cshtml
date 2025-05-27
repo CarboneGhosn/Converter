@@ -1,0 +1,38 @@
+﻿@{
+    ViewData["Title"] = "Nova Conversão";
+}
+
+<div class="container mt-4" style="max-width: 500px;">
+    <h2>Nova Conversão</h2>
+
+    <form method="post" asp-action="Create">
+        <div class="mb-3">
+            <label for="amount" class="form-label">Valor</label>
+            <input type="number" step="any" class="form-control" id="amount" name="amount" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="fromCurrency" class="form-label">De</label>
+            <select id="fromCurrency" name="fromCurrency" class="form-select" required>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="BRL" selected>BRL</option>
+                <option value="JPY">JPY</option>
+                <option value="GBP">GBP</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="toCurrency" class="form-label">Para</label>
+            <select id="toCurrency" name="toCurrency" class="form-select" required>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="BRL" selected>BRL</option>
+                <option value="JPY">JPY</option>
+                <option value="GBP">GBP</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Converter</button>
+    </form>
+</div>

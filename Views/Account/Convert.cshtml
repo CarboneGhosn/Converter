@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Conversor de Moedas";
+    var currencies = ViewBag.Currencies as List<string>;
+}
+
+<div class="container mt-4" style="max-width: 600px;">
+    <h2 class="mb-4">Conversor de Moedas</h2>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+    }
+
+    @if (ViewBag.Result != null)
+    {
+        <div class="alert alert-success">@ViewBag.Result</div>
+    }
+
+    <form method="post" action="/Currency/Convert">
+        <div class="row mb-3">
+            <div class="col">
+                <label for="fromCurrency" class="form-label">De</label>
+                <select id="fromCurrency" name="fromCurrency" class="form-select" required>
+                    <option value="">Selecione</option>
+                    @foreach (var c in currencies)
+                    {
+                        <option value="@c">@c</option>
+                    }
+                </select>
+            </div>
+            <div class="col">
+                <label for="toCurrency" class="form-label">Para</label>
+                <select id="toCurrency" name="toCurrency" class="form-select" required>
+                    <option value="">Selecione</option>
+                    @foreach (var c in currencies)
+                    {
+                        <option value="@c">@c</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="amount" class="form-label">Valor</label>
+            <input type="number" step="any" min="0" id="amount" name="amount" class="form-control" required />
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Converter</button>
+    </form>
+</div>
