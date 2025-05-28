@@ -16,7 +16,7 @@ namespace CurrencyRateViewer.Controllers
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
-            // Exemplo simples: usuário e senha fixos
+            
             if (username == "admin" && password == "Dani.0101!")
             {
                 HttpContext.Session.SetString("username", username);
