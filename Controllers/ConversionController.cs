@@ -17,7 +17,7 @@ namespace CurrencyRateViewer.Controllers
             _exchangeRateService = exchangeRateService;
         }
 
-        // Lista conversões
+        
         public IActionResult Index()
         {
             var conversions = _conversionService.GetAll();
@@ -57,8 +57,8 @@ namespace CurrencyRateViewer.Controllers
             }
 
             // Convertendo amount from "fromCurrency" to "toCurrency"
-            // Lembre-se: rates são base BRL, então vamos converter via BRL
-            decimal amountInBRL = amount / rates[fromCurrency]; // valor em BRL
+           
+            decimal amountInBRL = amount / rates[fromCurrency]; 
             decimal convertedAmount = amountInBRL * rates[toCurrency]; // convertido na moeda desejada
 
             var conversion = new Conversion
